@@ -3,10 +3,392 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Min hemsida</title>
+    <title>.NET YH // Den Galna Utvecklarklassen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <script defer src="index.js"></script>
 </head>
-<body>
+<body class="crt-enabled">
+    <!-- Matrix Rain Canvas Background -->
+    <canvas id="matrixCanvas" class="matrix-canvas"></canvas>
 
+    <!-- CRT Scanline & Vignette Overlay -->
+    <div class="crt-overlay"></div>
+    <div class="crt-scanline"></div>
+
+    <!-- Screen Flash Overlay for Panic Mode -->
+    <div id="flashOverlay" class="flash-overlay"></div>
+
+    <!-- Confetti Canvas for Party Mode -->
+    <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+
+    <!-- Top Command Bar -->
+    <header class="top-nav">
+        <div class="nav-left">
+            <span class="status-indicator online"></span>
+            <span class="sys-tag">CORE_V10.0 // STATUS: KAOTISK</span>
+            <span class="badge badge-purple">YH-2026</span>
+        </div>
+        <div class="nav-ticker" id="topTicker">
+            <span class="ticker-prefix">🔥 LATEST:</span>
+            <span class="ticker-text" id="tickerText">Laddar senaste skvallret från fikarummet...</span>
+        </div>
+        <div class="nav-controls">
+            <button id="btnAudioToggle" class="ctrl-btn" title="Växla ljud (8-bit Web Audio)">
+                <span class="icon">🔇</span> <span class="label">LJUD: AV</span>
+            </button>
+            <button id="btnCrtToggle" class="ctrl-btn" title="Växla CRT Skärmfilter">
+                <span class="icon">📺</span> <span class="label">CRT: PÅ</span>
+            </button>
+            <button id="btnPartyMode" class="ctrl-btn party-btn" title="Slå på Disco Party Mode!">
+                <span class="icon">🪩</span> <span class="label">PARTY</span>
+            </button>
+            <button id="btnPanic" class="ctrl-btn panic-btn" title="RÖR EJ: Deploy till produktion!">
+                <span class="icon">🚨</span> <span class="label">PUSH TILL PROD</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-badge glitch-hover" data-text="[ SYSTEM.OUT.OF.MEMORY.EXCEPTION ]">
+                ⚡ .NET UTVECKLARKLASSEN ⚡
+            </div>
+            <h1 class="hero-title glitch" data-text="VIBECODING & C# CHAOS">
+                VIBECODING &amp; C# CHAOS
+            </h1>
+            <p class="hero-subtitle">
+                Välkommen till den officiella hubben för Sveriges mest koffeinberikade .NET YH-studenter! 
+                Vi löser merge-konflikter med magkänsla, bygger 14 lager av abstraktion för en "Hello World", 
+                och söker LIA som om morgondagen inte fanns.
+            </p>
+
+            <div class="quick-stats-grid">
+                <div class="stat-card">
+                    <span class="stat-icon">☕</span>
+                    <span class="stat-value" id="globalCoffeeCount">4 892</span>
+                    <span class="stat-label">Koppar kaffe i blodet</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">💥</span>
+                    <span class="stat-value" id="globalNullRefCount">12 409</span>
+                    <span class="stat-label">NullReferenceExceptions</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">📦</span>
+                    <span class="stat-value">99.8%</span>
+                    <span class="stat-label">Beroende av StackOverflow</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">💼</span>
+                    <span class="stat-value" id="liaStatusLabel">LIA SÖKS</span>
+                    <span class="stat-label">Status på LinkedIn</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Interactive Grid: Terminal & Fika Engine -->
+        <section class="grid-two-col">
+            <!-- Retro Terminal Window -->
+            <div class="window terminal-window">
+                <div class="window-header">
+                    <div class="window-buttons">
+                        <span class="win-btn close" title="Stäng (inte på riktigt)"></span>
+                        <span class="win-btn min" title="Minimera"></span>
+                        <span class="win-btn max" title="Maximera"></span>
+                    </div>
+                    <div class="window-title">bash -- csharp-terminal@yh-netcore: ~ (PORT 5000)</div>
+                    <div class="window-status">ONLINE</div>
+                </div>
+                <div class="terminal-body" id="terminalBody">
+                    <div class="term-line welcome-line">
+                        [ .NET Core YH-Interactive Terminal v10.0.42 ]<br>
+                        Skriv <span class="term-highlight">help</span> för att lista kommandon, eller klicka på snabbknapparna nedan!
+                    </div>
+                    <div id="terminalHistory"></div>
+                    <div class="term-input-row">
+                        <span class="term-prompt">student@csharp:~$</span>
+                        <input type="text" id="termInput" class="term-input" autocomplete="off" spellcheck="false" placeholder="Skriv ett kommando...">
+                        <span class="cursor-blink">█</span>
+                    </div>
+                </div>
+                <div class="terminal-quick-bar">
+                    <span class="quick-label">Snabbkommandon:</span>
+                    <button class="chip" data-cmd="help">help</button>
+                    <button class="chip" data-cmd="fika">fika</button>
+                    <button class="chip" data-cmd="lia">lia</button>
+                    <button class="chip" data-cmd="dotnet build">dotnet build</button>
+                    <button class="chip" data-cmd="quote">quote</button>
+                    <button class="chip" data-cmd="smasher">smasher</button>
+                    <button class="chip" data-cmd="matrix">matrix</button>
+                    <button class="chip" data-cmd="nuke-production">nuke-production</button>
+                    <button class="chip" data-cmd="clear">clear</button>
+                </div>
+            </div>
+
+            <!-- Fika Engine 9000 & Coffee Overclock Clicker -->
+            <div class="window fika-window">
+                <div class="window-header">
+                    <div class="window-buttons">
+                        <span class="win-btn close"></span>
+                        <span class="win-btn min"></span>
+                        <span class="win-btn max"></span>
+                    </div>
+                    <div class="window-title">FIKA_ENGINE_9000.exe - Kaffe & Koffein Simulator</div>
+                </div>
+                <div class="fika-content">
+                    <div class="fika-animation-area">
+                        <div id="coffeeCup" class="coffee-cup-btn" role="button" tabindex="0" title="Klicka för att dricka kaffe!">
+                            <div class="steam-container">
+                                <span class="steam steam-1">~</span>
+                                <span class="steam steam-2">~</span>
+                                <span class="steam steam-3">~</span>
+                            </div>
+                            <div class="cup-emoji">☕</div>
+                            <div class="click-ripple" id="clickRipple"></div>
+                        </div>
+                        <div class="fika-badge" id="fikaLevelText">NORMAL KODARE</div>
+                    </div>
+
+                    <div class="fika-meter-box">
+                        <div class="meter-labels">
+                            <span>Koffein i blodet:</span>
+                            <span id="caffeineValue">120 mg</span>
+                        </div>
+                        <div class="meter-bar-track">
+                            <div class="meter-bar-fill" id="caffeineFill" style="width: 25%;"></div>
+                        </div>
+                        <div class="meter-status" id="overclockStatus">SYSTEM NOMINELLT. Tryck för boost!</div>
+                    </div>
+
+                    <div class="fika-stats-row">
+                        <div class="mini-stat">
+                            <span class="mini-label">Koppar druckna:</span>
+                            <span class="mini-num" id="userCupCount">0</span>
+                        </div>
+                        <div class="mini-stat">
+                            <span class="mini-label">Kod-hastighet:</span>
+                            <span class="mini-num" id="codingSpeed">1x</span>
+                        </div>
+                        <div class="mini-stat">
+                            <span class="mini-label">Gifflar konsumerade:</span>
+                            <span class="mini-num" id="gifflarCount">0</span>
+                        </div>
+                    </div>
+
+                    <div class="fika-actions">
+                        <button id="btnDrinkCoffee" class="cyber-btn primary">
+                            ⚡ BRYGG &amp; DRICK KAFFE (+50mg)
+                        </button>
+                        <button id="btnEatGiffel" class="cyber-btn">
+                            🥐 ÄT EN GIFFEL (+25xp)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bug Smasher Arcade Game -->
+        <section class="game-section">
+            <div class="window arcade-window">
+                <div class="window-header">
+                    <div class="window-buttons">
+                        <span class="win-btn close"></span>
+                        <span class="win-btn min"></span>
+                        <span class="win-btn max"></span>
+                    </div>
+                    <div class="window-title">ARCADE // .NET EXCEPTION SMASHER v1.0</div>
+                    <div class="arcade-score-board">
+                        <span>POÄNG: <strong id="gameScore">0</strong></span>
+                        <span>COMBO: <strong id="gameCombo">x1</strong></span>
+                        <span>REKORD: <strong id="gameHighScore">0</strong></span>
+                    </div>
+                </div>
+                <div class="arcade-arena" id="arcadeArena">
+                    <div class="arcade-overlay" id="arcadeStartOverlay">
+                        <h3>DÖDA BUGGARNA INNAN MERGE!</h3>
+                        <p>Klicka på flygande NullReferenceExceptions, MemoryLeaks och MergeConflicts innan de når produktion!</p>
+                        <button id="btnStartGame" class="cyber-btn start-game-btn">STARTA BUGG-SLAKTEN (15s)</button>
+                    </div>
+                    <div class="arena-crosshair-hint">Klicka för att slå med async/await-klubban!</div>
+                </div>
+                <div class="arcade-footer">
+                    <div class="time-left-bar">
+                        <span>TID KVAR:</span>
+                        <div class="time-track">
+                            <div class="time-fill" id="gameTimeFill" style="width: 100%;"></div>
+                        </div>
+                        <span id="gameTimerNum">15s</span>
+                    </div>
+                    <div class="arcade-instructions">
+                        Tips: Klicka snabbt för högre combo-multiplikator!
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Klassens Arketyper / Squad Roster -->
+        <section class="archetypes-section">
+            <div class="section-header">
+                <h2>🎭 KLASSENS .NET ARKETYPER</h2>
+                <p>Vem i klassrummet känner du igen? Hitta din sanna utvecklar-persona!</p>
+                <button id="btnRandomArchetype" class="cyber-btn highlight-btn">
+                    🎲 SLUMPA DIN PERSONA
+                </button>
+            </div>
+
+            <div class="archetypes-grid" id="archetypesGrid">
+                <!-- Dynamically populated or rich cards -->
+            </div>
+        </section>
+
+        <!-- The Chaos Tools: Excuse Generator, Commit Maker & Soundboard -->
+        <section class="grid-three-col">
+            <!-- Standup Excuse Generator -->
+            <div class="window tool-window">
+                <div class="window-header">
+                    <div class="window-title">🗣️ STANDUP-URSKÄKTER</div>
+                </div>
+                <div class="tool-body">
+                    <p class="tool-desc">När din sprintuppgift inte är klar och Pontus frågar varför:</p>
+                    <div class="generated-quote-box" id="excuseBox">
+                        "Det funkade perfekt i min lokala Docker-container i morse..."
+                    </div>
+                    <button id="btnNewExcuse" class="cyber-btn full-width">
+                        🎲 GENERERA NY URSKÄKT
+                    </button>
+                    <button id="btnCopyExcuse" class="cyber-btn secondary full-width">
+                        📋 KOPIERA TILL SLACK
+                    </button>
+                </div>
+            </div>
+
+            <!-- Conventional Commit Generator -->
+            <div class="window tool-window">
+                <div class="window-header">
+                    <div class="window-title">📝 GIT COMMIT GENERATOR</div>
+                </div>
+                <div class="tool-body">
+                    <p class="tool-desc">100% Conventional Commits, 0% koll på vad koden faktiskt gör:</p>
+                    <div class="generated-quote-box commit-box" id="commitBox">
+                        fix: add Task.Delay(500) to resolve mysterious race condition
+                    </div>
+                    <button id="btnNewCommit" class="cyber-btn full-width">
+                        ⚡ SLUMPA EN COMMIT
+                    </button>
+                    <button id="btnCopyCommit" class="cyber-btn secondary full-width">
+                        📋 KOPIERA COMMIT-MEDDELANDE
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interactive 8-Bit Web Audio Soundboard -->
+            <div class="window tool-window">
+                <div class="window-header">
+                    <div class="window-title">🔊 .NET SOUNDBOARD</div>
+                </div>
+                <div class="tool-body">
+                    <p class="tool-desc">Syntetiserade 8-bit ljudeffekter direkt i webbläsaren:</p>
+                    <div class="soundboard-grid">
+                        <button class="sound-chip" data-sound="nullref">💥 NullRef</button>
+                        <button class="sound-chip" data-sound="buildok">✅ Build OK</button>
+                        <button class="sound-chip" data-sound="error">❌ Build Fail</button>
+                        <button class="sound-chip" data-sound="coin">🪙 Level Up</button>
+                        <button class="sound-chip" data-sound="coffee">☕ Fika Slurp</button>
+                        <button class="sound-chip" data-sound="laser">⚡ Laser C#</button>
+                        <button class="sound-chip" data-sound="siren">🚨 Alarm</button>
+                        <button class="sound-chip" data-sound="victory">🏆 LIA Klar!</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- "Spot the Bug" Interactive C# Code Chaos -->
+        <section class="code-chaos-section">
+            <div class="window code-window">
+                <div class="window-header">
+                    <div class="window-title">🔥 LIVE C# CODE REVIEW: "VEM SKREV DETTA?"</div>
+                    <div class="code-tab-name">Program.cs</div>
+                </div>
+                <div class="code-content-wrapper">
+                    <pre class="code-pre" id="codeEditor"><code><span class="kw">using</span> System;
+<span class="kw">using</span> System.Threading.Tasks;
+
+<span class="kw">public class</span> <span class="cls">YhStudentLife</span>
+{
+    <span class="kw">private static</span> <span class="kw">int</span> _caffeineLevel = <span class="num">100</span>;
+    <span class="kw">private static</span> <span class="kw">string</span>? _liaPlats = <span class="kw">null</span>;
+
+    <span class="kw">public static async Task</span> <span class="func">Main</span>()
+    {
+        <span class="comm">// TODO: Refaktorera detta innan Pontus ser...</span>
+        <span class="kw">while</span> (<span class="kw">true</span>)
+        {
+            <span class="kw">if</span> (_caffeineLevel &lt;= <span class="num">0</span>)
+                <span class="kw">throw new</span> <span class="cls">FikaNotFoundException</span>(<span class="str">"Slut på kaffe i automaten!"</span>);
+
+            <span class="kw">try</span>
+            {
+                <span class="kw">await</span> <span class="func">ApplyForLiaAsync</span>(_liaPlats!.Length); <span class="comm">// &lt;-- Vad kan gå fel här?!</span>
+            }
+            <span class="kw">catch</span> (<span class="cls">NullReferenceException</span> ex)
+            {
+                Console.WriteLine(<span class="str">$"[PANIK]: {ex.Message} -&gt; Dricker mer kaffe!"</span>);
+                _caffeineLevel += <span class="num">50</span>;
+            }
+        }
+    }
+}</code></pre>
+                    <div class="code-actions-sidebar">
+                        <h4>TESTA KÖRA KODEN:</h4>
+                        <button id="btnRunCode" class="cyber-btn primary">
+                            ▶️ dotnet run
+                        </button>
+                        <button id="btnFixCode" class="cyber-btn">
+                            🪄 Magisk AI Refaktor
+                        </button>
+                        <button id="btnBreakCode" class="cyber-btn danger">
+                            💣 Lägg till fler buggar
+                        </button>
+                        <div class="code-output-console" id="codeConsoleOutput">
+                            Klicka på "dotnet run" för att köra koden i vår virtuella .NET runtime...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DVD Bouncing Logo Mode (Toggleable Easter Egg) -->
+        <div id="dvdContainer" class="dvd-container hidden">
+            <div id="dvdLogo" class="dvd-logo">
+                <span class="csharp-logo-art">C#</span>
+                <span class="dvd-sub">.NET YH</span>
+            </div>
+        </div>
+
+        <!-- Draggable Panic Windows Container (Spawned in Panic Mode) -->
+        <div id="panicWindowsLayer" class="panic-windows-layer"></div>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="footer-line">
+                Skapad med ren vibecoding, kärlek för C#, och orimliga mängder kaffe för vår .NET YH-klass.
+            </div>
+            <div class="footer-links">
+                <span>Made for ASP.NET Core &amp; Modern Browsers</span>
+                <span>•</span>
+                <a href="#terminalBody" class="scroll-top">Tillbaka till terminalen ⬆</a>
+                <span>•</span>
+                <span id="konamiStatus">💡 Prova Konami-koden (↑ ↑ ↓ ↓ ← → ← → B A)</span>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="index.js"></script>
 </body>
+</html>
